@@ -15,11 +15,7 @@ export const getAllContacts = async (req, res, next) => {
   try {
     const contacts = await listContacts();
 
-    res.json({
-      status: "success",
-      code: 200,
-      contacts,
-    });
+    res.status(200).json(contacts);
   } catch (error) {
     next(error);
   }
@@ -34,11 +30,7 @@ export const getContactById = async (req, res, next) => {
       throw HttpError(404);
     }
 
-    res.json({
-      status: "success",
-      code: 200,
-      contact,
-    });
+    res.status(200).json(contact);
   } catch (error) {
     next(error);
   }
@@ -62,8 +54,8 @@ export const deleteContact = async (req, res, next) => {
 export const createContact = async (req, res, next) => {
   try {
     const { error } = createContactSchema.validate(req.body);
-      if (error) {
-      throw HttpError(400, "Please enter a valid data");
+    if (error) {
+      throw HttpError(400, error.message);
     }
 
     const newContact = await addContact(req.body);
@@ -81,15 +73,13 @@ export const updateContact = async (req, res, next) => {
     }
     const { error } = updateContactSchema.validate(req.body);
         if (error) {
-            const errorItem = error.details[0].context.key;
-        console.log(errorItem);
-      throw HttpError(400, `Please enter ${errorItem} field correctly`);
+      throw HttpError(400, error.message);
     }
 
     const { id } = req.params;
     const updatedContact = await editContact(id, req.body);
 
-    res.status(201).json(updatedContact);
+    res.status(200).json(updatedContact);
   } catch (error) {
     next(error);
   }
