@@ -8,8 +8,10 @@ import {
   editContact,
 } from "../services/contactsServices.js";
 import HttpError from "../helpers/HttpError.js";
-import { createContactSchema, updateContactSchema } from '../schemas/contactsSchemas.js';
-
+import {
+  createContactSchema,
+  updateContactSchema,
+} from "../schemas/contactsSchemas.js";
 
 export const getAllContacts = async (req, res, next) => {
   try {
@@ -66,17 +68,19 @@ export const createContact = async (req, res, next) => {
 };
 
 export const updateContact = async (req, res, next) => {
-    try {
-      
+  try {
     if (!Object.keys(req.body).length > 0) {
       throw HttpError(400, "Body must have at least one field");
     }
     const { error } = updateContactSchema.validate(req.body);
-        if (error) {
+    if (error) {
       throw HttpError(400, error.message);
     }
 
     const { id } = req.params;
+    if (id !== req.body.id) {
+      throw HttpError(404, "Not found");
+    }
     const updatedContact = await editContact(id, req.body);
 
     res.status(200).json(updatedContact);
