@@ -78,10 +78,11 @@ export const updateContact = async (req, res, next) => {
     }
 
     const { id } = req.params;
-    if (id !== req.body.id) {
+  
+    const updatedContact = await editContact(id, req.body);
+    if (!updatedContact) {
       throw HttpError(404, "Not found");
     }
-    const updatedContact = await editContact(id, req.body);
 
     res.status(200).json(updatedContact);
   } catch (error) {
