@@ -1,9 +1,10 @@
 import { Schema, model } from "mongoose";
 
-const contactSchema = new Schema({
-     name: {
+const contactSchema = new Schema(
+  {
+    name: {
       type: String,
-      required: [true, 'Set name for contact'],
+      required: [true, "Set name for contact"],
     },
     email: {
       type: String,
@@ -15,6 +16,8 @@ const contactSchema = new Schema({
       type: Boolean,
       default: false,
     },
-})
+  },
+  { versionKey: false, timestamps: true }
+);
 
-export const Contact = model('contact', contactSchema);
+export const Contact = model("contact", contactSchema);
