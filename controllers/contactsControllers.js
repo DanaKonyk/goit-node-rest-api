@@ -10,7 +10,7 @@ import {
 
 export const getAllContacts = async (req, res, next) => {
   try {
-    const contacts = await Contact.find();
+    const contacts = await Contact.find({owner});
 
     res.status(200).json(contacts);
   } catch (error) {
@@ -55,7 +55,7 @@ export const createContact = async (req, res, next) => {
       throw HttpError(400, error.message);
     }
 
-    const newContact = await Contact.create(req.body);
+    const newContact = await Contact.create({...req.body, owner});
     res.status(201).json(newContact);
   } catch (error) {
     next(error);
