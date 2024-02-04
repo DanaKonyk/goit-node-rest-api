@@ -28,8 +28,7 @@ export const register = async (req, res, next) => {
     const newUser = await User.create({ ...req.body, password: hashPassword });
 
     res.status(201).json({
-      email: newUser.email,
-      subscription: newUser.subscription,
+      user: { email: newUser.email, subscription: newUser.subscription },
     });
   } catch (error) {
     next(error);
@@ -46,9 +45,12 @@ export const login = async (req, res, next) => {
     }
 
     const user = await User.findOne({ email });
-    const passwordCompare = await bcrypt.compare(password, user.password);
+    if (!user) {
+      throw HttpError(401, "Invalid email or password. Please try again.");
+    }
 
-    if (!user || !passwordCompare) {
+    const passwordCompare = await bcrypt.compare(password, user.password);
+    if (!passwordCompare) {
       throw HttpError(401, "Invalid email or password. Please try again.");
     }
 

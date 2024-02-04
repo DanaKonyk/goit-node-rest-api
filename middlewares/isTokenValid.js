@@ -25,7 +25,7 @@ const isTokenValid = async (req, res, next) => {
     next();
     
   } catch (error) {
-    next(HttpError(401));
+    next(HttpError(401, 'No access'));
   }
 };
 

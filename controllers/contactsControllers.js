@@ -1,17 +1,17 @@
 import express from "express";
 
-import { Contact } from '../models/contact.js';
+import { Contact } from "../models/contact.js";
 import HttpError from "../helpers/HttpError.js";
 import {
   createContactSchema,
-    updateContactSchema,
+  updateContactSchema,
   updateContactFavoriteSchema,
 } from "../schemas/contactsSchemas.js";
 
 export const getAllContacts = async (req, res, next) => {
   try {
     const { _id: owner } = req.user;
-    const contacts = await Contact.find({owner});
+    const contacts = await Contact.find({ owner });
 
     res.status(200).json(contacts);
   } catch (error) {
@@ -57,7 +57,7 @@ export const createContact = async (req, res, next) => {
     }
 
     const { _id: owner } = req.user;
-    const newContact = await Contact.create({...req.body, owner});
+    const newContact = await Contact.create({ ...req.body, owner });
     res.status(201).json(newContact);
   } catch (error) {
     next(error);
@@ -75,8 +75,10 @@ export const updateContact = async (req, res, next) => {
     }
 
     const { id } = req.params;
-  
-    const updatedContact = await Contact.findByIdAndUpdate(id, req.body, { new: true });
+
+    const updatedContact = await Contact.findByIdAndUpdate(id, req.body, {
+      new: true,
+    });
     if (!updatedContact) {
       throw HttpError(404, "Not found");
     }
@@ -88,20 +90,21 @@ export const updateContact = async (req, res, next) => {
 };
 
 export const updateContactFavoriteOption = async (req, res, next) => {
-    try {
-      
-    if (!('favorite' in req.body)) {
-      throw HttpError(400, 'Missing field: favorite');
+  try {
+    if (!("favorite" in req.body)) {
+      throw HttpError(400, "Missing field: favorite");
     }
-   
+
     const { error } = updateContactFavoriteSchema.validate(req.body);
     if (error) {
       throw HttpError(400, error.message);
     }
 
     const { id } = req.params;
-  
-    const updatedContact = await Contact.findByIdAndUpdate(id, req.body, { new: true });
+
+    const updatedContact = await Contact.findByIdAndUpdate(id, req.body, {
+      new: true,
+    });
     if (!updatedContact) {
       throw HttpError(404, "Not found");
     }
