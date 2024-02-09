@@ -118,17 +118,20 @@ export const getCurrent = async (req, res, next) => {
 export const updateAvatar = async (req, res, next) => {
   try {
     const { _id } = req.user;
-    const { path: tempUpload, originalname } = req.file;
 
     if (!req.file) {
-      throw HttpError(400, "To change the avatar, please attach the file.") 
+      throw HttpError(400, "To change the avatar, please attach the file.");
     }
+
+    const { path: tempUpload, originalname } = req.file;
 
     const fileName = `${_id}_${originalname}`;
     const resultUpload = path.resolve(avatarDir, fileName);
 
     const avatar = await Jimp.read(tempUpload);
-    avatar.resize(250, 250).write(resultUpload); 
+    avatar.resize(250, 250).write(resultUpload);
+
+    await fs.unlink(tempUpload);
 
     const avatarURL = path.join("avatars", fileName);
     await User.findByIdAndUpdate(_id, { avatarURL });
