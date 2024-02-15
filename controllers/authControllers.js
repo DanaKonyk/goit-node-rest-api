@@ -1,7 +1,7 @@
 import express from "express";
 import { promises as fs } from "fs";
 import path from "path";
-import bcrypt from "bcrypt";
+import bcryptjs from 'bcryptjs';
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import gravatar from "gravatar";
@@ -33,7 +33,7 @@ export const register = async (req, res, next) => {
       throw HttpError(409, "Email in use");
     }
 
-    const hashPassword = await bcrypt.hash(password, 10);
+    const hashPassword = await bcryptjs.hash(password, 10);
     const verificationToken = nanoid();
     const avatarURL = gravatar.url(email);
 
@@ -132,7 +132,7 @@ export const login = async (req, res, next) => {
       throw HttpError(401, "Please verify your email before login.");
     }
 
-    const passwordCompare = await bcrypt.compare(password, user.password);
+    const passwordCompare = await bcryptjs.compare(password, user.password);
     if (!passwordCompare) {
       throw HttpError(401, "Invalid email or password. Please try again.");
     }
@@ -162,7 +162,7 @@ export const logout = async (req, res, next) => {
     const user = await User.findById(_id);
 
     if (!user) {
-      throw HttpError(401, "Not a middle");
+      throw HttpError(401);
     }
 
     await User.findByIdAndUpdate(_id, { token: "" });
